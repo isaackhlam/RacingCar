@@ -13,9 +13,10 @@
 //Set send target and send data structure
 uint8_t sendTargetMAC[] = { 0x10, 0x52, 0x1C, 0x5C, 0xD1, 0x74 };
 struct car_data {
-    int speed;
-    int angle;
+  int speed;
+  int angle;
 };
+int errorcount = 0;
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   if (status == ESP_NOW_SEND_SUCCESS) return;
@@ -66,25 +67,26 @@ void loop() {
   //Limit output range (<= 60 -> 0, >MOTOR_MAX_SPEED -> MOTOR_MAX_SPEED)
   x = abs(x) < MOTOR_MIN_SPEED ? 0 : (
         x > MOTOR_MAX_SPEED ? MOTOR_MAX_SPEED : (
-        x < -MOTOR_MAX_SPEED ? -MOTOR_MAX_SPEED : 0
+        x < -MOTOR_MAX_SPEED ? -MOTOR_MAX_SPEED : x
       ));
   y = abs(y) < MOTOR_MIN_SPEED ? 0 : (
         y > MOTOR_MAX_SPEED ? MOTOR_MAX_SPEED : (
-        y < -MOTOR_MAX_SPEED ? -MOTOR_MAX_SPEED : 0
+        y < -MOTOR_MAX_SPEED ? -MOTOR_MAX_SPEED : y
       ));
 
   //Create output data (cal the angle & speed)
   car_data Send_Data;
-  if(!y) { //pos on x-axis
+  if (!y) {  //pos on x-axis
     Send_Data.angle = x < 0 ? 180 : 0;
     Send_Data.speed = x;
-  } else { //to polar cood.
-    Send_Data.angle = (atan2(y, x) / PI) * 180;
+  } else {  //to polar cood.
+    Send_Data.angle = atan2(y, x) / PI * 180;
     Send_Data.speed = abs(y);
   }
-  Serial.printf("[%.2f,%.2f] Speed: %d, Angle: %d\n",x,y,Send_Data.speed,Send_Data.angle);
+  Serial.printf("[%.2f,%.2f] Speed: %d, Angle: %d\n", x, y, Send_Data.speed, Send_Data.angle);
 
   //send Data
   esp_err_t result = esp_now_send(sendTargetMAC, (uint8_t *)&Send_Data, sizeof(Send_Data));
-  if (result != ESP_OK) Serial.println("FAILED SEND");
+  errorcount = result == ESP_OK ? 0 : errorcount + 1;
+  if (!(errorcount % 100)) Serial.println("Error sending the data");
 }
