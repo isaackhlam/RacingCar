@@ -1,4 +1,4 @@
-//RECIVER
+//RECEIVER
 #include <esp_now.h>
 #include <WiFi.h>
 
@@ -9,14 +9,14 @@
 #define MOTOR_FRONTWHEEL_GORIGHT 27 //A1B
 #define WIFI_CHANNEL 0
 
-//Set send target and recieve data structure
+//Set send target and receive data structure
 esp_now_peer_info_t peerInfo;
 uint8_t sendTargetMAC[] = {0xF0, 0x08, 0xD1, 0xC7, 0xAA, 0xF8};
-struct car_data {
+struct carData {
     int speed;
     int angle;
 };
-int errorcount = 0;
+int errorCount = 0;
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   if (status == ESP_NOW_SEND_SUCCESS) return;
@@ -25,24 +25,24 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 }
 
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
-  //Get cardata
-  car_data Recieve_Data;
-  memcpy(&Recieve_Data, incomingData, sizeof(Recieve_Data));
+  //Get car data
+  carData receiveData;
+  memcpy(&receiveData, incomingData, sizeof(receiveData));
 
-  //Set Direction (-1:Backwards, 0: Stop, 1: Foward)
-  //If Speed = 0, STOP, angle < 0 BACKWARDS, angle > 0, FOWARD
-  int direction = !Recieve_Data.speed ? 0 : (
-                    Recieve_Data.angle > 0 ? 1 : -1
+  //Set Direction (-1:Backwards, 0: Stop, 1: Forward)
+  //If Speed = 0, STOP, angle < 0 BACKWARDS, angle > 0, Forward
+  int direction = !receiveData.speed ? 0 : (
+                    receiveData.angle > 0 ? 1 : -1
                   );
-  if(Recieve_Data.speed)
-    frontwheel(abs(Recieve_Data.angle));
-  backwheel(direction, abs(Recieve_Data.speed * sin(Recieve_Data.angle * PI / 180)));
+  if(receiveData.speed)
+    frontWheel(abs(receiveData.angle));
+  backWheel(direction, abs(receiveData.speed * sin(receiveData.angle * PI / 180)));
 
-  Serial.printf("|%d| speed: %d, angle: %d\n", direction, Recieve_Data.speed, Recieve_Data.angle);
+  Serial.printf("|%d| speed: %d, angle: %d\n", direction, receiveData.speed, receiveData.angle);
 }
 
-void backwheel(int direction, int speed) { 
-  //Set Direction (-1:Backwards, 0: Stop, 1: Foward)
+void backWheel(int direction, int speed) {
+  //Set Direction (-1:Backwards, 0: Stop, 1: Forward)
 
   //Motor A: Forward Speed, Motor B: Backwards Speed
   Serial.printf(" {PIN:[%d - %d]} ", MOTOR_BACKWHEEL_A, direction == 1 ? speed : 0);
@@ -53,8 +53,8 @@ void backwheel(int direction, int speed) {
   analogWrite(MOTOR_BACKWHEEL_B, direction == -1 ? speed : 0);
 }
 
-void frontwheel(int angle) { 
-  //Set Direction (-1:Backwards, 0: Stop, 1: Foward)
+void frontWheel(int angle) {
+  //Set Direction (-1:Backwards, 0: Stop, 1: Forward)
 
   if(80 <= abs(angle) && abs(angle) <= 100) return;
 
@@ -67,16 +67,16 @@ void frontwheel(int angle) {
   analogWrite(MOTOR_FRONTWHEEL_GORIGHT,  abs(angle) < 90 ? 255 : 0);
 }
 
-void outputdelay(int OK, char *Output, int fenquency, int showcounter) {
+void outputDelay(int OK, char *Output, int frequency, int showCounter) {
   static int counter = 0;
   counter = OK ? 0 : counter + 1;
-  if (!(counter % fenquency)) {
-    if(showcounter) 
+  if (!(counter % frequency)) {
+    if(showCounter)
       Serial.printf("|%d| ", counter);
     Serial.println(Output);
   }
 }
- 
+
 void setup() {
   // Init Serial Monitor
   Serial.begin(115200);
@@ -103,19 +103,19 @@ void setup() {
     for(;;);
   }
 
-  //Set Up Event Listener on Send and Recieve
+  //Set Up Event Listener on Send and Receive
   esp_now_register_send_cb(OnDataSent);
   esp_now_register_recv_cb(OnDataRecv);
 }
 
 void loop() {
   //send device boot time
-  char outputtext[30];
+  char outputText[30];
   int Send_Data = millis();
-  sprintf(outputtext, "Send Time: %d", Send_Data);
-  //outputdelay(1, outputtext, 1000, 0);
+  sprintf(outputText, "Send Time: %d", Send_Data);
+  //outputDelay(1, outputText, 1000, 0);
 
   esp_err_t result = esp_now_send(sendTargetMAC, (uint8_t *) &Send_Data, sizeof(Send_Data));
-  errorcount = result == ESP_OK ? 0 : errorcount + 1;
-  if (!(errorcount % 100)) Serial.println(result);
+  errorCount = result == ESP_OK ? 0 : errorCount + 1;
+  if (!(errorCount % 100)) Serial.println(result);
 }

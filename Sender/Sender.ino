@@ -18,7 +18,7 @@ struct car_data {
   int speed;
   int angle;
 };
-int errorcount = 0;
+int errorCount = 0;
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   if (status == ESP_NOW_SEND_SUCCESS) return;
@@ -27,10 +27,10 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 }
 
 void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
-  //get reciever boot time
-  int Recieve_Data;
-  memcpy(&Recieve_Data, incomingData, sizeof(Recieve_Data));
-  Serial.printf("Recieve Time: %d\n", Recieve_Data);
+  //get receiver boot time
+  int receiveData;
+  memcpy(&receiveData, incomingData, sizeof(receiveData));
+  Serial.printf("Recieve Time: %d\n", receiveData);
 }
 
 void setup() {
@@ -53,7 +53,7 @@ void setup() {
     for(;;);
   }
 
-  //Set Up Event Listener on Send and Recieve
+  //Set Up Event Listener on Send and Receive
   esp_now_register_send_cb(OnDataSent);
   esp_now_register_recv_cb(OnDataRecv);
 }
@@ -84,6 +84,6 @@ void loop() {
 
   //send Data
   esp_err_t result = esp_now_send(sendTargetMAC, (uint8_t *)&Send_Data, sizeof(Send_Data));
-  errorcount = result == ESP_OK ? 0 : errorcount + 1;
-  if (!(errorcount % 100)) Serial.println(result);
+  errorCount = result == ESP_OK ? 0 : errorCount + 1;
+  if (!(errorCount % 100)) Serial.println(result);
 }
