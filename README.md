@@ -1,10 +1,13 @@
 # RacingCar
 
 ## Introduction
+
 This is a project about engine jyunhing 2022. The instagram page is <a href="https://www.instagram.com/22engine_jyunhing/">@22engine_jyunhing</a>.
+
 * 香港中文大學工程學院學生慶祝活動2022
 
 ## Environment
+
 * In your Arduino IDE, go to File> Preferences
 
 * Installing ESP32 Add-on in Arduino IDE Windows, Mac OS X, Linux open preferences
