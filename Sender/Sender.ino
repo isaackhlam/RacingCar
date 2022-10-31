@@ -77,9 +77,9 @@ void loop() {
 
   //Create output data (cal the angle & speed)
   car_data Send_Data;
-  Send_Data.angle = y ? atan2(y, x) / PI * 180  //pos not on x-axis
+  Send_Data.angle = y ? atan2(y, x) * 180 / PI //pos not on x-axis
                       : (x < 0 ? 180 : 0);
-  Send_Data.speed = sqrt(sq(x)+sq(y));
+  Send_Data.speed = sqrt(x * x + y * y);
   Serial.printf("[%.2f,%.2f] Speed: %d, Angle: %d\n", x, y, Send_Data.speed, Send_Data.angle);
 
   //send Data
