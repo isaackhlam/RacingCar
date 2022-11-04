@@ -30,7 +30,7 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   //get receiver boot time
   int receiveData;
   memcpy(&receiveData, incomingData, sizeof(receiveData));
-  Serial.printf("Recieve Time: %d\n", receiveData);
+  Serial.printf("Receive Time: %d\n", receiveData);
 }
 
 void setup() {
