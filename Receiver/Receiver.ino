@@ -3,78 +3,68 @@
 #include <WiFi.h>
 
 // Define Pin Port and Preference
-#define MOTOR_BACKWHEEL_A 17		// B1A
-#define MOTOR_BACKWHEEL_B 16		// B1B
-#define MOTOR_FRONTWHEEL_GOLEFT 26	// A1A
-#define MOTOR_FRONTWHEEL_GORIGHT 27 // A1B
+#define MOTOR_BACK_WHEEL_A 17		// B1A
+#define MOTOR_BACK_WHEEL_B 16		// B1B
+#define MOTOR_FRONT_WHEEL_GO_LEFT 26	// A1A
+#define MOTOR_FRONT_WHEEL_GO_RIGHT 27 // A1B
 #define WIFI_CHANNEL 0
 #define INF_LOOP for (;;);
 
 // Set send target and receive data structure
 esp_now_peer_info_t peerInfo;
 uint8_t sendTargetMAC[] = {0xF0, 0x08, 0xD1, 0xC7, 0xAA, 0xF8};
-int errorCount = 0;
 
 struct carData {
-	int speed;
-	int angle;
+	int x;
+	int y;
 };
-
-// Check Sender in discovery range
-void OnDataSent(const uint8_t *macAddress, esp_now_send_status_t status) {
-	if (status == ESP_NOW_SEND_SUCCESS)
-		return;
-	Serial.print("Joystick Wi-Fi Not found; Local MAC: ");
-	Serial.println(WiFi.macAddress());
-}
 
 void OnDataRecv(const uint8_t *macAddress, const uint8_t *incomingData, int len) {
 	carData receiveData;
 	memcpy(&receiveData, incomingData, sizeof(receiveData));
 
-	// TODO: Rework calculation?
 	// Set Direction (-1: Backwards, 0: Stop, 1: Forward)
 	// If Speed = 0, STOP, angle < 0 BACKWARDS, angle > 0, Forward
-	int direction = !receiveData.speed ? 0 : (receiveData.angle > 0 ? 1 : -1);
-	if (receiveData.speed)
-		frontWheel(abs(receiveData.angle));
-	backWheel(direction, abs(receiveData.speed * sin(receiveData.angle * PI / 180)));
+	frontWheel(receiveData.x);
+	backWheel(receiveData.y);
 
-	Serial.printf("|%d| speed: %d, angle: %d\n", direction, receiveData.speed, receiveData.angle);
+	Serial.printf("X-direction: %d, Y-direction: %d\n", receiveData.x, receiveData.y);
 }
 
 // TODO: hardware limitation, need rework?
-void frontWheel(int angle) {
-	// Set Direction (-1: Backwards, 0: Stop, 1: Forward)
-	if (80 <= abs(angle) && abs(angle) <= 100)
-		return;
-
+void frontWheel(int x) {
 	// Motor A: Forward Speed, Motor B: Backwards Speed
-	Serial.printf(" {PIN:[%d - %d]} ", MOTOR_FRONTWHEEL_GOLEFT, abs(angle) > 90 ? 255 : 0);
-	analogWrite(MOTOR_FRONTWHEEL_GOLEFT, abs(angle) >= 90 ? 255 : 0);
-
-	Serial.printf(" {PIN:[%d - %d]} ", MOTOR_FRONTWHEEL_GORIGHT, abs(angle) <= 90 ? 255 : 0);
-	analogWrite(MOTOR_FRONTWHEEL_GORIGHT, abs(angle) < 90 ? 255 : 0);
+	if (x == -1)
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_LEFT, HIGH);
+	else if (x == 1)
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_RIGHT, HIGH);
+	else {
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_LEFT, LOW);
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_RIGHT, LOW);
+	}
 }
 
-void backWheel(int direction, int speed) {
+void backWheel(int y) {
 	// Set Direction (-1:Backwards, 0: Stop, 1: Forward)
 
 	// Motor A: Forward Speed, Motor B: Backwards Speed
-	Serial.printf(" {PIN:[%d - %d]} ", MOTOR_BACKWHEEL_A, direction == 1 ? speed : 0);
-	analogWrite(MOTOR_BACKWHEEL_A, direction == 1 ? speed : 0);
-
-	Serial.printf(" {PIN:[%d - %d]} ", MOTOR_BACKWHEEL_B, direction == -1 ? speed : 0);
-	analogWrite(MOTOR_BACKWHEEL_B, direction == -1 ? speed : 0);
+	if(y > 0)
+		analogWrite(MOTOR_BACK_WHEEL_A, abs(y));
+	else if(y < 0)
+		analogWrite(MOTOR_BACK_WHEEL_B, abs(y));
+	else{
+		analogWrite(MOTOR_BACK_WHEEL_A, 0);
+		analogWrite(MOTOR_BACK_WHEEL_B, 0);
+	}
 }
 
 void setup() {
 	Serial.begin(115200);
 
-	pinMode(MOTOR_BACKWHEEL_A, OUTPUT);
-	pinMode(MOTOR_BACKWHEEL_B, OUTPUT);
-	pinMode(MOTOR_FRONTWHEEL_GOLEFT, OUTPUT);
-	pinMode(MOTOR_FRONTWHEEL_GORIGHT, OUTPUT);
+	pinMode(MOTOR_BACK_WHEEL_A, OUTPUT);
+	pinMode(MOTOR_BACK_WHEEL_B, OUTPUT);
+	pinMode(MOTOR_FRONT_WHEEL_GO_LEFT, OUTPUT);
+	pinMode(MOTOR_FRONT_WHEEL_GO_RIGHT, OUTPUT);
 
 	WiFi.mode(WIFI_STA);
 	if (esp_now_init() != ESP_OK) {
@@ -91,17 +81,8 @@ void setup() {
 	}
 
 	// The two function act as Event Listener
-	// esp_now_register_send_cb(OnDataSent);
 	esp_now_register_recv_cb(OnDataRecv);
 }
 
 void loop() {
-	//* Debug only, check two board connection by sending dummy timestamp.
-	// char outputText[30];
-	// int Send_Data = millis();
-	// sprintf(outputText, "Send Time: %d", Send_Data);
-
-	// esp_err_t result = esp_now_send(sendTargetMAC, (uint8_t *) &Send_Data, sizeof(Send_Data));
-	// errorCount = result == ESP_OK ? 0 : errorCount + 1;
-	// if (!(errorCount % 100)) Serial.println(result);
 }
