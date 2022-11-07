@@ -8,7 +8,7 @@
 #define MOTOR_FRONTWHEEL_GOLEFT 26	// A1A
 #define MOTOR_FRONTWHEEL_GORIGHT 27 // A1B
 #define WIFI_CHANNEL 0
-#define DEADZONE for (;;);
+#define INF_LOOP for (;;);
 
 // Set send target and receive data structure
 esp_now_peer_info_t peerInfo;
@@ -79,7 +79,7 @@ void setup() {
 	WiFi.mode(WIFI_STA);
 	if (esp_now_init() != ESP_OK) {
 		Serial.println("Error initializing ESP-NOW");
-		DEADZONE
+		INF_LOOP
 	}
 
 	memcpy(peerInfo.peer_addr, sendTargetMAC, 6);
@@ -87,7 +87,7 @@ void setup() {
 	peerInfo.encrypt = false;
 	if (esp_now_add_peer(&peerInfo) != ESP_OK) {
 		Serial.println("Failed to add peer");
-		DEADZONE
+		INF_LOOP
 	}
 
 	// The two function act as Event Listener

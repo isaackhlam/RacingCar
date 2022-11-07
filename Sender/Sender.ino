@@ -9,7 +9,7 @@
 #define WIFI_CHANNEL 0
 #define MOTOR_MAX_SPEED 255
 #define MOTOR_MIN_SPEED 60
-#define DEADZONE for (;;);
+#define INF_LOOP for (;;);
 
 // Set send target and send data structure
 esp_now_peer_info_t peerInfo;
@@ -41,7 +41,7 @@ void setup() {
     WiFi.mode(WIFI_STA);
     if (esp_now_init() != ESP_OK) {
         Serial.println("Error initializing ESP-NOW");
-        DEADZONE
+        INF_LOOP
     }
 
     memcpy(peerInfo.peer_addr, sendTargetMAC, 6);
@@ -49,7 +49,7 @@ void setup() {
     peerInfo.encrypt = false;
     if (esp_now_add_peer(&peerInfo) != ESP_OK) {
         Serial.println("Failed to add peer");
-        DEADZONE
+        INF_LOOP
     }
 
     // This function act as event listener
