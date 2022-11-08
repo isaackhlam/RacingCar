@@ -15,7 +15,7 @@
 esp_now_peer_info_t peerInfo;
 uint8_t sendTargetMAC[] = {0x10, 0x52, 0x1C, 0x5C, 0xD1, 0x74};
 
-struct carData{
+struct carData {
     int x;
     int y;
 };
@@ -60,20 +60,17 @@ void loop() {
     int x = 0;
 
     // Limit output range (<= 60 -> 0, >MOTOR_MAX_SPEED -> MOTOR_MAX_SPEED)
-    if(abs(y) < MOTOR_MIN_SPEED)
+    if (abs(y) < MOTOR_MIN_SPEED)
         y = 0;
-    if(l == HIGH && r == LOW)
+    if (l == HIGH && r == LOW)
         x = -1;
-    if(l == LOW && r == HIGH)
+    if (l == LOW && r == HIGH)
         x = 1;
 
-    // Create output data (cal the angle & speed)
-    // TODO: maybe rework calculation
     carData sendData;
     sendData.y = y;
     sendData.x = x;
     Serial.printf("X-direction: %d, Y-direction: %d\n", sendData.x, sendData.y);
 
-    // send Data
     esp_err_t result = esp_now_send(sendTargetMAC, (uint8_t *)&sendData, sizeof(sendData));
 }

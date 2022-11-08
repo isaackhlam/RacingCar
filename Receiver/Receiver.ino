@@ -3,9 +3,9 @@
 #include <WiFi.h>
 
 // Define Pin Port and Preference
-#define MOTOR_BACK_WHEEL_A 17		// B1A
-#define MOTOR_BACK_WHEEL_B 16		// B1B
-#define MOTOR_FRONT_WHEEL_GO_LEFT 26	// A1A
+#define MOTOR_BACK_WHEEL_A 17		  // B1A
+#define MOTOR_BACK_WHEEL_B 16		  // B1B
+#define MOTOR_FRONT_WHEEL_GO_LEFT 26  // A1A
 #define MOTOR_FRONT_WHEEL_GO_RIGHT 27 // A1B
 #define WIFI_CHANNEL 0
 #define INF_LOOP for (;;);
@@ -22,9 +22,6 @@ struct carData {
 void OnDataRecv(const uint8_t *macAddress, const uint8_t *incomingData, int len) {
 	carData receiveData;
 	memcpy(&receiveData, incomingData, sizeof(receiveData));
-
-	// Set Direction (-1: Backwards, 0: Stop, 1: Forward)
-	// If Speed = 0, STOP, angle < 0 BACKWARDS, angle > 0, Forward
 	frontWheel(receiveData.x);
 	backWheel(receiveData.y);
 
@@ -46,11 +43,10 @@ void frontWheel(int x) {
 
 void backWheel(int y) {
 	// Set Direction (-1:Backwards, 0: Stop, 1: Forward)
-
 	// Motor A: Forward Speed, Motor B: Backwards Speed
-	if(y > 0)
+	if (y > 0)
 		analogWrite(MOTOR_BACK_WHEEL_A, abs(y));
-	else if(y < 0)
+	else if (y < 0)
 		analogWrite(MOTOR_BACK_WHEEL_B, abs(y));
 	else{
 		analogWrite(MOTOR_BACK_WHEEL_A, 0);
@@ -80,7 +76,7 @@ void setup() {
 		INF_LOOP
 	}
 
-	// The two function act as Event Listener
+	// The function act as Event Listener
 	esp_now_register_recv_cb(OnDataRecv);
 }
 
