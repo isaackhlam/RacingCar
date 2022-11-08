@@ -23,7 +23,7 @@ struct carData {
 void OnDataSent(const uint8_t *macAddress, esp_now_send_status_t status) {
     if (status == ESP_NOW_SEND_SUCCESS)
         return;
-    Serial.print("FAILED: ");
+    Serial.print("Failed sent to device, MAC address: ");
     Serial.println(WiFi.macAddress());
 }
 
@@ -35,7 +35,7 @@ void setup() {
 
     WiFi.mode(WIFI_STA);
     if (esp_now_init() != ESP_OK) {
-        Serial.println("Error initializing ESP-NOW");
+        Serial.println("Error initializing ESP-NOW, Please Restart board.");
         INF_LOOP
     }
 
@@ -43,7 +43,7 @@ void setup() {
     peerInfo.channel = WIFI_CHANNEL;
     peerInfo.encrypt = false;
     if (esp_now_add_peer(&peerInfo) != ESP_OK) {
-        Serial.println("Failed to add peer");
+        Serial.println("Failed to add peer, Please Restart board.");
         INF_LOOP
     }
 
@@ -54,10 +54,10 @@ void setup() {
 void loop() {
     // TODO: Need refactor joystick calibration and mapping
     // map read data to -MOTOR_MAX_SPEED to MOTOR_MAX_SPEED
-    int y = map(analogRead(VRy) - 1975, -1960, 2160, -MOTOR_MAX_SPEED, MOTOR_MAX_SPEED);
+    int x = 0;
     int l = digitalRead(LEFT);
     int r = digitalRead(RIGHT);
-    int x = 0;
+    int y = map(analogRead(VRy) - 1975, -1960, 2160, -MOTOR_MAX_SPEED, MOTOR_MAX_SPEED);
 
     // Limit output range (<= 60 -> 0, >MOTOR_MAX_SPEED -> MOTOR_MAX_SPEED)
     if (abs(y) < MOTOR_MIN_SPEED)
@@ -68,8 +68,8 @@ void loop() {
         x = 1;
 
     carData sendData;
-    sendData.y = y;
     sendData.x = x;
+    sendData.y = y;
     Serial.printf("X-direction: %d, Y-direction: %d\n", sendData.x, sendData.y);
 
     esp_err_t result = esp_now_send(sendTargetMAC, (uint8_t *)&sendData, sizeof(sendData));

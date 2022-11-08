@@ -20,35 +20,41 @@ struct carData {
 };
 
 void OnDataRecv(const uint8_t *macAddress, const uint8_t *incomingData, int len) {
+	// Get data
 	carData receiveData;
 	memcpy(&receiveData, incomingData, sizeof(receiveData));
+	// Adjust motor
 	frontWheel(receiveData.x);
 	backWheel(receiveData.y);
-
 	Serial.printf("X-direction: %d, Y-direction: %d\n", receiveData.x, receiveData.y);
 }
 
 // TODO: hardware limitation, need rework?
 void frontWheel(int x) {
-	// Motor A: Forward Speed, Motor B: Backwards Speed
-	if (x == -1)
+	// Set Direction (-1: Left, 0: Straight, 1: Right)
+	// Motor A: Forward, Motor B: Backwards
+	if (x == -1) {
 		digitalWrite(MOTOR_FRONT_WHEEL_GO_LEFT, HIGH);
-	else if (x == 1)
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_RIGHT, LOW);
+	} else if (x == 1) {
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_LEFT, LOW);
 		digitalWrite(MOTOR_FRONT_WHEEL_GO_RIGHT, HIGH);
-	else {
+	} else {
 		digitalWrite(MOTOR_FRONT_WHEEL_GO_LEFT, LOW);
 		digitalWrite(MOTOR_FRONT_WHEEL_GO_RIGHT, LOW);
 	}
 }
 
 void backWheel(int y) {
-	// Set Direction (-1:Backwards, 0: Stop, 1: Forward)
+	// Set Direction (-1: Backwards, 0: Stop, 1: Forward)
 	// Motor A: Forward Speed, Motor B: Backwards Speed
-	if (y > 0)
+	if (y > 0) {
 		analogWrite(MOTOR_BACK_WHEEL_A, abs(y));
-	else if (y < 0)
+		analogWrite(MOTOR_BACK_WHEEL_B, 0);
+	} else if (y < 0) {
+		analogWrite(MOTOR_BACK_WHEEL_A, 0);
 		analogWrite(MOTOR_BACK_WHEEL_B, abs(y));
-	else{
+	} else{
 		analogWrite(MOTOR_BACK_WHEEL_A, 0);
 		analogWrite(MOTOR_BACK_WHEEL_B, 0);
 	}
@@ -56,7 +62,6 @@ void backWheel(int y) {
 
 void setup() {
 	Serial.begin(115200);
-
 	pinMode(MOTOR_BACK_WHEEL_A, OUTPUT);
 	pinMode(MOTOR_BACK_WHEEL_B, OUTPUT);
 	pinMode(MOTOR_FRONT_WHEEL_GO_LEFT, OUTPUT);
@@ -64,7 +69,7 @@ void setup() {
 
 	WiFi.mode(WIFI_STA);
 	if (esp_now_init() != ESP_OK) {
-		Serial.println("Error initializing ESP-NOW");
+		Serial.println("Error initializing ESP-NOW, Please Restart board.");
 		INF_LOOP
 	}
 
@@ -72,7 +77,7 @@ void setup() {
 	peerInfo.channel = WIFI_CHANNEL;
 	peerInfo.encrypt = false;
 	if (esp_now_add_peer(&peerInfo) != ESP_OK) {
-		Serial.println("Failed to add peer");
+		Serial.println("Failed to add peer, Please Restart board.");
 		INF_LOOP
 	}
 
