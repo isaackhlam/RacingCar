@@ -25,8 +25,13 @@ struct carData {
 void OnDataSent(const uint8_t *macAddress, esp_now_send_status_t status) {
     if (status == ESP_NOW_SEND_SUCCESS)
         return;
-    Serial.print("Failed sent to device, local MAC address: ");
-    Serial.println(WiFi.macAddress());
+
+    Serial.print("Failed sent to device, target MAC address: ");
+    for (int i = 0; i < 5; i++) {
+        Serial.print(macAddress[i], HEX);
+        Serial.print(":");
+    }
+    Serial.println(macAddress[6], HEX);
 }
 
 void setup() {
