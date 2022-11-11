@@ -69,7 +69,7 @@ void setup() {
 	}
 
 	Serial.print("Finish initialization, local MAC: ");
-	Serial.println(WIFI.macAddress());
+	Serial.println(WiFi.macAddress());
 
 	// The function act as Event Listener
 	esp_now_register_recv_cb(OnDataRecv);
