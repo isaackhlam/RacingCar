@@ -7,12 +7,7 @@
 #define MOTOR_BACK_WHEEL_B 16		  // B1B
 #define MOTOR_FRONT_WHEEL_GO_LEFT 26  // A1A
 #define MOTOR_FRONT_WHEEL_GO_RIGHT 27 // A1B
-#define WIFI_CHANNEL 0
 #define INF_LOOP for (;;);
-
-// Set send target and receive data structure
-esp_now_peer_info_t peerInfo;
-uint8_t sendTargetMAC[] = {0xF0, 0x08, 0xD1, 0xC7, 0xAA, 0xF8};
 
 struct carData {
 	int x;
@@ -73,13 +68,8 @@ void setup() {
 		INF_LOOP
 	}
 
-	memcpy(peerInfo.peer_addr, sendTargetMAC, 6);
-	peerInfo.channel = WIFI_CHANNEL;
-	peerInfo.encrypt = false;
-	if (esp_now_add_peer(&peerInfo) != ESP_OK) {
-		Serial.println("Failed to add peer, Please Restart board.");
-		INF_LOOP
-	}
+	Serial.print("Finish initialization, local MAC: ");
+	Serial.println(WIFI.macAddress());
 
 	// The function act as Event Listener
 	esp_now_register_recv_cb(OnDataRecv);

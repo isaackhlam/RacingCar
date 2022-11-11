@@ -54,6 +54,8 @@ void setup() {
 
     defaultValue /= 10;
 
+    Serial.println("Finish initialization, default joystick value: %d", defaultValue);
+
     // This function act as event listener
     esp_now_register_send_cb(OnDataSent);
 }
