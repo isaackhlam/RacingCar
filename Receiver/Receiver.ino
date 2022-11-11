@@ -26,7 +26,6 @@ void OnDataRecv(const uint8_t *macAddress, const uint8_t *incomingData, int len)
 	Serial.printf("X-direction: %d, Y-direction: %d\n", receiveData.x, receiveData.y);
 }
 
-// TODO: hardware limitation, need rework?
 void frontWheel(int x) {
 	// Set Direction (-1: Left, 0: Straight, 1: Right)
 	// Motor A: Forward, Motor B: Backwards
