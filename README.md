@@ -26,9 +26,9 @@ This project aims to build a remote racing car with 2 ESP-32 and controlled by h
   4. Search esp and install required library (There should only be one result)
   ![step1](./image/step1.png)
 
-- Select the correct board module, We use `ESP32 DEV Module` for this project.
+- Select the correct board module, We use `ESP32 Dev Module` for this project.
   ![select board](image/select.png)
-  ![step2](./image/step2.png)
+  ![step2](./image/select_board.png)
 
 ## Hardware connection
 
