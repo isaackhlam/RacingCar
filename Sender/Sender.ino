@@ -13,7 +13,7 @@
 
 // Set send target and send data structure
 esp_now_peer_info_t peerInfo;
-uint8_t sendTargetMAC[] = {0x10, 0x52, 0x1C, 0x5C, 0xD1, 0x74};
+uint8_t sendTargetMAC[] = {0xC8, 0xF0, 0x9E, 0x9C, 0x57, 0xFC};
 
 int defaultValue = 0;
 
@@ -54,7 +54,8 @@ void setup() {
 
     defaultValue /= 10;
 
-    Serial.println("Finish initialization, default joystick value: %d", defaultValue);
+    Serial.println("Finish initialization, default joystick value: %d");
+    Serial.println(defaultValue);
 
     // This function act as event listener
     esp_now_register_send_cb(OnDataSent);
