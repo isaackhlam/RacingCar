@@ -28,7 +28,7 @@ This project aims to build a remote racing car with 2 ESP-32 and controlled by h
 
 - Select the correct board module, We use `ESP32 Dev Module` for this project.
   ![select board](image/select.png)
-  ![step2](./image/select_board.png)
+  ![step2](./image/step2.png)
 
 ## Hardware connection
 
