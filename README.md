@@ -13,9 +13,9 @@ This project aims to build a remote racing car with 2 ESP-32 and controlled by h
 
 ## Environment
 
-- This project is done under Arduino IDE == 2.0.4, but Arduino IDE >= 2.0.0 should be fine to run this project.
+- This project is done under Arduino IDE == 2.0.1, but Arduino IDE >= 2.0.0 should be fine to run this project.
 
-- Install library for ESP32
+- Install library for ESP32, this project is done with library version == 2.0.5
   1. In your Arduino IDE, go to `File > Preferences`
   2. Paste the link below into `Additional Board Manager URLs` field:
    ``
@@ -26,7 +26,7 @@ This project aims to build a remote racing car with 2 ESP-32 and controlled by h
   4. Search esp and install required library (There should only be one result)
   ![step1](./image/step1.png)
 
-- Select the correct board module, We use ESP32-WROOM-DA for this project.
+- Select the correct board module, We use `ESP32 DEV Module` for this project.
   ![select board](image/select.png)
   ![step2](./image/step2.png)
 
