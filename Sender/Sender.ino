@@ -15,6 +15,8 @@
 esp_now_peer_info_t peerInfo;
 uint8_t sendTargetMAC[] = {0x10, 0x52, 0x1C, 0x5C, 0xD1, 0x74};
 
+int defaultValue = 0;
+
 struct carData {
     int x;
     int y;
@@ -23,7 +25,7 @@ struct carData {
 void OnDataSent(const uint8_t *macAddress, esp_now_send_status_t status) {
     if (status == ESP_NOW_SEND_SUCCESS)
         return;
-    Serial.print("Failed sent to device, MAC address: ");
+    Serial.print("Failed sent to device, local MAC address: ");
     Serial.println(WiFi.macAddress());
 }
 
@@ -47,6 +49,11 @@ void setup() {
         INF_LOOP
     }
 
+    for(int i = 0; i < 10; i++)
+        defaultValue += analogRead(VRy);
+
+    defaultValue /= 10;
+
     // This function act as event listener
     esp_now_register_send_cb(OnDataSent);
 }
@@ -57,7 +64,7 @@ void loop() {
     int x = 0;
     int l = digitalRead(LEFT);
     int r = digitalRead(RIGHT);
-    int y = map(analogRead(VRy) - 1975, -1960, 2160, -MOTOR_MAX_SPEED, MOTOR_MAX_SPEED);
+    int y = map(analogRead(VRy) - defaultValue, 0 - defaultValue, 4098 - defaultValue, -MOTOR_MAX_SPEED, MOTOR_MAX_SPEED);
 
     // Limit output range (<= 60 -> 0, >MOTOR_MAX_SPEED -> MOTOR_MAX_SPEED)
     if (abs(y) < MOTOR_MIN_SPEED)
