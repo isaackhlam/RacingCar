@@ -17,52 +17,6 @@ struct carData {
 	int y;
 };
 
-void OnDataRecv(const uint8_t *macAddress, const uint8_t *incomingData, int len) {
-	// Get data
-	carData receiveData;
-	memcpy(&receiveData, incomingData, sizeof(receiveData));
-	// Adjust motor
-	frontWheel(receiveData.x);
-	backWheel(receiveData.y);
-	Serial.printf("X-direction: %d, Y-direction: %d\n", receiveData.x, receiveData.y);
-}
-
-void frontWheel(int x) {
-	// Set Direction (-1: Left, 0: Straight, 1: Right)
-	// Motor A: Forward, Motor B: Backwards
-	if (x == -1) {
-		digitalWrite(MOTOR_FRONT_WHEEL_GO_PWM, HIGH);
-		digitalWrite(MOTOR_FRONT_WHEEL_GO_LEFT, HIGH);
-		digitalWrite(MOTOR_FRONT_WHEEL_GO_RIGHT, LOW);
-	} else if (x == 1) {
-		digitalWrite(MOTOR_FRONT_WHEEL_GO_PWM, HIGH);
-		digitalWrite(MOTOR_FRONT_WHEEL_GO_LEFT, LOW);
-		digitalWrite(MOTOR_FRONT_WHEEL_GO_RIGHT, HIGH);
-	} else {
-		digitalWrite(MOTOR_FRONT_WHEEL_GO_PWM, LOW);
-		digitalWrite(MOTOR_FRONT_WHEEL_GO_LEFT, LOW);
-		digitalWrite(MOTOR_FRONT_WHEEL_GO_RIGHT, LOW);
-	}
-}
-
-void backWheel(int y) {
-	// Set Direction (-1: Backwards, 0: Stop, 1: Forward)
-	// Motor A: Forward Speed, Motor B: Backwards Speed
-	if (y > 0) {
-		analogWrite(MOTOR_BACK_WHEEL_PWM, abs(y));
-		digitalWrite(MOTOR_BACK_WHEEL_A, 1);
-		digitalWrite(MOTOR_BACK_WHEEL_B, 0);
-	} else if (y < 0) {
-		analogWrite(MOTOR_BACK_WHEEL_PWM, abs(y));
-		digitalWrite(MOTOR_BACK_WHEEL_A, 0);
-		digitalWrite(MOTOR_BACK_WHEEL_B, 1);
-	} else{
-		analogWrite(MOTOR_BACK_WHEEL_PWM, 0);
-		digitalWrite(MOTOR_BACK_WHEEL_A, 0);
-		digitalWrite(MOTOR_BACK_WHEEL_B, 0);
-	}
-}
-
 void setup() {
 	Serial.begin(115200);
 	pinMode(MOTOR_BACK_WHEEL_A, OUTPUT);
@@ -88,5 +42,48 @@ void setup() {
 	esp_now_register_recv_cb(OnDataRecv);
 }
 
-void loop() {
+void loop() {}
+
+void OnDataRecv(const uint8_t *macAddress, const uint8_t *incomingData, int len) {
+	// Get data
+	carData receiveData;
+	memcpy(&receiveData, incomingData, sizeof(receiveData));
+	Serial.printf("X-direction: %d, Y-direction: %d\n", receiveData.x, receiveData.y);
+	
+	// Adjust motor
+	
+	/* Front Wheel */
+	// Set Direction (-1: Left, 0: Straight, 1: Right)
+	if (receiveData.x == -1) {
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_PWM, HIGH);
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_LEFT, HIGH);
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_RIGHT, LOW);
+	} else if (receiveData.x == 1) {
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_PWM, HIGH);
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_LEFT, LOW);
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_RIGHT, HIGH);
+	} else {
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_PWM, LOW);
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_LEFT, LOW);
+		digitalWrite(MOTOR_FRONT_WHEEL_GO_RIGHT, LOW);
+	}
+	/* Front Wheel */
+	
+	
+	/* Back Wheel */
+	// Set Direction (-1: Backwards, 0: Stop, 1: Forward)
+	if (receiveData.y > 0) {
+		analogWrite(MOTOR_BACK_WHEEL_PWM, abs(receiveData.y));
+		digitalWrite(MOTOR_BACK_WHEEL_A, 1);
+		digitalWrite(MOTOR_BACK_WHEEL_B, 0);
+	} else if (receiveData.y < 0) {
+		analogWrite(MOTOR_BACK_WHEEL_PWM, abs(receiveData.y));
+		digitalWrite(MOTOR_BACK_WHEEL_A, 0);
+		digitalWrite(MOTOR_BACK_WHEEL_B, 1);
+	} else{
+		analogWrite(MOTOR_BACK_WHEEL_PWM, 0);
+		digitalWrite(MOTOR_BACK_WHEEL_A, 0);
+		digitalWrite(MOTOR_BACK_WHEEL_B, 0);
+	}
+	/* Back Wheel */
 }
