@@ -9,6 +9,7 @@
 #define MOTOR_FRONT_WHEEL_GO_PWM 25	  // PWMA
 #define MOTOR_FRONT_WHEEL_GO_LEFT 26  // A1A
 #define MOTOR_FRONT_WHEEL_GO_RIGHT 27 // A1B
+#define STAND_BY 33
 #define INF_LOOP for (;;);
 
 struct carData {
@@ -70,12 +71,15 @@ void setup() {
 	pinMode(MOTOR_FRONT_WHEEL_GO_LEFT, OUTPUT);
 	pinMode(MOTOR_FRONT_WHEEL_GO_RIGHT, OUTPUT);
 	pinMode(MOTOR_FRONT_WHEEL_GO_PWM, OUTPUT);
+	pinMode(STAND_BY, OUTPUT);
 
 	WiFi.mode(WIFI_STA);
 	if (esp_now_init() != ESP_OK) {
 		Serial.println("Error initializing ESP-NOW, Please Restart board.");
 		INF_LOOP
 	}
+
+	digitalWrite(STAND_BY, HIGH);
 
 	Serial.print("Finish initialization, local MAC: ");
 	Serial.println(WiFi.macAddress());
