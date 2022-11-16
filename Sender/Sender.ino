@@ -76,7 +76,6 @@ void setup() {
 }
 
 void loop() {
-    // TODO: Need refactor joystick calibration and mapping
     // map read data to -MOTOR_MAX_SPEED to MOTOR_MAX_SPEED
     int x = 0;
     int l = digitalRead(LEFT);
@@ -86,9 +85,10 @@ void loop() {
     // Limit output range (<= 60 -> 0, >MOTOR_MAX_SPEED -> MOTOR_MAX_SPEED)
     if (abs(y) < MOTOR_MIN_SPEED)
         y = 0;
-    if (l == HIGH && r == LOW)
-        x = -1;
+    // The button is active HIGH
     if (l == LOW && r == HIGH)
+        x = -1;
+    if (l == HIGH && r == LOW)
         x = 1;
 
     carData sendData;
