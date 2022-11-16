@@ -3,9 +3,9 @@
 #include <WiFi.h>
 
 // Define Pin Port and Preference
-#define VRy 35
-#define LEFT 33
-#define RIGHT 34
+#define VRy 33
+#define LEFT 12
+#define RIGHT 27
 #define WIFI_CHANNEL 0
 #define MOTOR_MAX_SPEED 255
 #define MOTOR_MIN_SPEED 60
@@ -39,6 +39,15 @@ void setup() {
     pinMode(VRy, INPUT);
     pinMode(LEFT, INPUT);
     pinMode(RIGHT, INPUT);
+    // Serve as VCC of button / joystick
+    pinMode(14 ,OUTPUT);
+    pinMode(26 ,OUTPUT);
+    pinMode(32 ,OUTPUT);
+
+    digitalWrite(14, HIGH);
+    digitalWrite(26, HIGH);
+    digitalWrite(32, HIGH);
+
 
     WiFi.mode(WIFI_STA);
     if (esp_now_init() != ESP_OK) {
