@@ -31,7 +31,7 @@ void OnDataSent(const uint8_t *macAddress, esp_now_send_status_t status) {
         Serial.print(macAddress[i], HEX);
         Serial.print(":");
     }
-    Serial.println(macAddress[6], HEX);
+    Serial.println(macAddress[5], HEX);
 }
 
 void setup() {
