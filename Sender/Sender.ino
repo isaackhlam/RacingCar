@@ -40,9 +40,9 @@ void setup() {
     pinMode(LEFT, INPUT);
     pinMode(RIGHT, INPUT);
     // Serve as VCC of button / joystick
-    pinMode(14 ,OUTPUT);
-    pinMode(26 ,OUTPUT);
-    pinMode(32 ,OUTPUT);
+    pinMode(14, OUTPUT);
+    pinMode(26, OUTPUT);
+    pinMode(32, OUTPUT);
 
     digitalWrite(14, HIGH);
     digitalWrite(26, HIGH);
