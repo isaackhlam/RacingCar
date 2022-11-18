@@ -11,7 +11,7 @@ This project aims to build a remote racing car with 2 ESP-32 and controlled by h
 - Arduino IDE v2
 - Motor x 2
 - ESP32(ICC: ) x 2
-- Motor Driver(Model: ) x 1
+- Motor Driver(Model: TB6612FNG) x 1
 - Joystick x 1
 - Button x 2
 
@@ -37,4 +37,43 @@ This project aims to build a remote racing car with 2 ESP-32 and controlled by h
 
 ## Hardware connection
 
-WIP
+### Receiver (Car)
+
+| Source | Destination  |
+|--------|--------------|
+| PWMA   | ESP32 25     |
+| AIN2   | ESP32 27     |
+| AIN1   | ESP32 26     |
+| STBY   | ESP32 33/VCC |
+| BIN1   | ESP32 16     |
+| BIN2   | ESP32 17     |
+| PWMB   | ESP32 5      |
+| VM     | Car Bat +    |
+| GND    | Car Bat -    |
+| AO1    | Front Motor  |
+| AO2    | Front Motor  |
+| BO2    | Back Motor   |
+| BO1    | Back Motor   |
+| GND    | ESP32 GND    |
+
+![connection graph](./image/motorDriver.png)
+
+### Sender (Controller)  
+
+| Source       | Destination |
+|--------------|-------------|
+| Joystick GND | ESP32 GND   |
+| Joystick VCC | ESP32 32    |
+| Joystick VRx | ESP32 33    |
+| ButA GND     | ESP32 GND   |
+| ButA VCC     | ESP32 14    |
+| ButA OUT     | ESP32 12    |
+| ButB GND     | ESP32 GND   |
+| ButB VCC     | ESP32 26    |
+| ButB OUT     | ESP32 27    |
+
+![connection graph](./image/controller.png)
+Note: Connect to Joystick VRy instead of VRx depends on the joystick.
+
+## Code
+
