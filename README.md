@@ -77,3 +77,28 @@ Note: Connect to Joystick VRy instead of VRx depends on the joystick.
 
 ## Code
 
+WIP
+
+## Troubleshooting
+
+### Driver
+
+For linux, you may need to
+
+1. Install `pyserial`  
+``pip install pyserial``
+2. Add to `uucp` group  
+``usermode -aG uucp <user_name>``
+3. Load `cdc_acm` module  
+``modprobe cdc_acm``
+
+### No connection established
+
+Make sure the board is turn on, and `lsusb` to see whether the cable using can transmit data (The esp32 board should shown).
+
+Try to uninstall esp32 library from board manager and reinstall, some Arduino IDE version having this bug arduino/arduino-cli#1970.
+
+### Debug procedure
+
+Follow the flow below, if encounter unknown issue, it would probably hardware issue, try to replace a new one.
+![debug procedure](./image/debug.png)
