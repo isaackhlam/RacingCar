@@ -2,8 +2,7 @@
 
 ## Introduction
 
-This is a project about CUHK engine jyunhing 2022 (香港中文大學工程學院學生慶祝活動2022).  
-The instagram page is [@22engine_jyunhing](https://www.instagram.com/22engine_jyunhing/)  
+This is a project about CUHK engine jyunhing 2022 (香港中文大學工程學院學生慶祝活動2022). Instagram page: [@22engine_jyunhing](https://www.instagram.com/22engine_jyunhing/)  
 This project aims to build a remote racing car with 2 ESP-32 and controlled by handmade controller via WIFI.  
 
 ## Component
