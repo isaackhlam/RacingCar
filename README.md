@@ -95,7 +95,7 @@ For linux, you may need to
 1. Install `pyserial`  
 ``pip install pyserial``
 2. Add to `uucp` group  
-``usermode -aG uucp <user_name>``
+``usermod -aG uucp <user_name>``
 3. Load `cdc_acm` module  
 ``modprobe cdc_acm``  
 
