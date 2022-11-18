@@ -77,7 +77,14 @@ Note: Connect to Joystick VRy instead of VRx depends on the joystick.
 
 ## Code
 
-WIP
+1. Flash the receiver code into car esp32.
+2. Serial Monitor(115200 baud) should show the local MAC address
+![upload  receiver](./image/receiver.png)
+3. Change MAC Address in sender code to that MAC address shown
+![upload sender](./image/sender.png)
+4. FLash the sender code into controller esp32.
+
+After 4 step above, the car should work. If not working, Trouble shooting section below may help.
 
 ## Troubleshooting
 
@@ -90,7 +97,9 @@ For linux, you may need to
 2. Add to `uucp` group  
 ``usermode -aG uucp <user_name>``
 3. Load `cdc_acm` module  
-``modprobe cdc_acm``
+``modprobe cdc_acm``  
+
+Note: Step 2 may need reboot to take effect.
 
 ### No connection established
 
@@ -102,3 +111,8 @@ Try to uninstall esp32 library from board manager and reinstall, some Arduino ID
 
 Follow the flow below, if encounter unknown issue, it would probably hardware issue, try to replace a new one.
 ![debug procedure](./image/debug.png)
+
+### Wrong boot mode detected
+
+If when uploading, Arduino IDE show wrong boot mode detected error (exit status 2). Try upload again and when `Connecting...` shown, hold the Boot button on ESP32
+![wrong boot mode](./image/exitcode2.png)
